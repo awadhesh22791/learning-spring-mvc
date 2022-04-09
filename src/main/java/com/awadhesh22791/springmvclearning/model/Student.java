@@ -37,7 +37,7 @@ public class Student {
 	private String[] operatingSystem;
 	@NotNull(message="is required.")
 	@Size(min=1,message="is required.")
-	@CourseCode
+	@CourseCode(value = "DEC",message = "course code must start with DEC")
 	private String courseCode;
 	private LinkedHashMap<String, String>countryOptions=new LinkedHashMap<String, String>();
 	private LinkedHashMap<String, String>languages=new LinkedHashMap<String, String>();
