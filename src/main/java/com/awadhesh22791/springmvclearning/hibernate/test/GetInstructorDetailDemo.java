@@ -7,7 +7,7 @@ import lombok.extern.log4j.Log4j2;
 public class GetInstructorDetailDemo {
 	public static void main(String[] args) {
 		InstructorDetail instructorDetail=InstructorDetail.builder().id(2).build();
-		instructorDetail=instructorDetail.get(6);
+		instructorDetail=instructorDetail.get(3);
 		log.info("Loaded instructor detail: {}.",instructorDetail);
 		log.info("Loaded Instructor: {}.",instructorDetail.getInstructor());
 	}

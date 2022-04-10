@@ -35,7 +35,7 @@ public class InstructorDetail {
 	private String youtubleChannel;
 	@Column(name = "hobby")
 	private String hobby;
-	@OneToOne(mappedBy = "instructorDetail",cascade = CascadeType.ALL)
+	@OneToOne(mappedBy = "instructorDetail",cascade = {CascadeType.DETACH,CascadeType.MERGE,CascadeType.PERSIST,CascadeType.REFRESH})
 	private Instructor instructor;
 	
 	public void load() {
@@ -55,6 +55,20 @@ public class InstructorDetail {
 		try (Session session = factory.getCurrentSession()){
 			session.beginTransaction();
 			instructorDetail = session.get(this.getClass(), id);
+			session.getTransaction().commit();
+		} finally {
+			factory.close();
+		}
+		return instructorDetail;
+	}
+	public InstructorDetail delete() {
+		SessionFactory factory=new Configuration().configure().addAnnotatedClass(InstructorDetail.class).addAnnotatedClass(Instructor.class).buildSessionFactory();
+		InstructorDetail instructorDetail=null;
+		try (Session session = factory.getCurrentSession()){
+			session.beginTransaction();
+			session.load(this, this.id);
+			this.getInstructor().setInstructorDetail(null);
+			session.delete(this);
 			session.getTransaction().commit();
 		} finally {
 			factory.close();

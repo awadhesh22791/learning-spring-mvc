@@ -8,7 +8,7 @@ import lombok.extern.log4j.Log4j2;
 public class GetInstructorDemo {
 	public static void main(String[] args) {
 		Instructor rahul=new Instructor();
-		rahul.load(1);
+		rahul.load(3);
 		log.info("Loaded instructor: {}.",rahul);
 	}
 }
