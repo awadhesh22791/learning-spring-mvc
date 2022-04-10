@@ -39,7 +39,9 @@ public class InstructorDetail {
 	private Instructor instructor;
 	
 	public void load() {
-		SessionFactory factory=new Configuration().configure().addAnnotatedClass(InstructorDetail.class).addAnnotatedClass(Instructor.class).buildSessionFactory();
+		SessionFactory factory=new Configuration().configure().addAnnotatedClass(InstructorDetail.class)
+				.addAnnotatedClass(Instructor.class)
+				.addAnnotatedClass(Course.class).buildSessionFactory();
 		try (Session session = factory.getCurrentSession()){
 			session.beginTransaction();
 			session.load(this, this.id);
@@ -50,7 +52,9 @@ public class InstructorDetail {
 	}
 	
 	public InstructorDetail get(Integer id) {
-		SessionFactory factory=new Configuration().configure().addAnnotatedClass(InstructorDetail.class).addAnnotatedClass(Instructor.class).buildSessionFactory();
+		SessionFactory factory=new Configuration().configure().addAnnotatedClass(InstructorDetail.class)
+				.addAnnotatedClass(Instructor.class)
+				.addAnnotatedClass(Course.class).buildSessionFactory();
 		InstructorDetail instructorDetail=null;
 		try (Session session = factory.getCurrentSession()){
 			session.beginTransaction();

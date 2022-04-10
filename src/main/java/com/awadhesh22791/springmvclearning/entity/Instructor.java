@@ -1,12 +1,17 @@
 package com.awadhesh22791.springmvclearning.entity;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
@@ -41,10 +46,22 @@ public class Instructor {
 	@OneToOne(cascade = CascadeType.ALL)
 	@JoinColumn(name = "instructor_detail_id")
 	private InstructorDetail instructorDetail;
+	@OneToMany(mappedBy = "instructor",
+			cascade = {CascadeType.DETACH,CascadeType.MERGE,CascadeType.PERSIST,CascadeType.REFRESH},
+			fetch = FetchType.EAGER)
+	private List<Course>courses;
+	
+	public void addCourse(Course course) {
+		if(this.courses==null) {
+			this.courses=new ArrayList<>();
+		}
+		this.courses.add(course);
+		course.setInstructor(this);
+	}
 
 	public void save() {
 		SessionFactory factory = new Configuration().configure().addAnnotatedClass(this.getClass())
-				.addAnnotatedClass(InstructorDetail.class).buildSessionFactory();
+				.addAnnotatedClass(InstructorDetail.class).addAnnotatedClass(Course.class).buildSessionFactory();
 		try (Session session=factory.getCurrentSession()) {
 			session.beginTransaction();
 			session.persist(this);
@@ -56,7 +73,7 @@ public class Instructor {
 	
 	public void load(Integer id) {
 		SessionFactory factory = new Configuration().configure().addAnnotatedClass(this.getClass())
-				.addAnnotatedClass(InstructorDetail.class).buildSessionFactory();
+				.addAnnotatedClass(InstructorDetail.class).addAnnotatedClass(Course.class).buildSessionFactory();
 		try (Session session=factory.getCurrentSession()) {
 			session.beginTransaction();
 			session.load(this, id);
@@ -68,7 +85,7 @@ public class Instructor {
 	
 	public void delete() {
 		SessionFactory factory = new Configuration().configure().addAnnotatedClass(this.getClass())
-				.addAnnotatedClass(InstructorDetail.class).buildSessionFactory();
+				.addAnnotatedClass(InstructorDetail.class).addAnnotatedClass(Course.class).buildSessionFactory();
 		this.load(this.id);
 		try (Session session=factory.getCurrentSession()) {
 			session.beginTransaction();
