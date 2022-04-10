@@ -2,7 +2,7 @@ package com.awadhesh22791.springmvclearning.hibernate.test;
 
 import java.util.List;
 
-import com.awadhesh22791.springmvclearning.model.Employee;
+import com.awadhesh22791.springmvclearning.entity.Employee;
 
 import lombok.extern.log4j.Log4j2;
 @Log4j2

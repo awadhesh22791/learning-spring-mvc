@@ -1,4 +1,4 @@
-package com.awadhesh22791.springmvclearning.model;
+package com.awadhesh22791.springmvclearning.entity;
 
 import java.util.Collections;
 import java.util.Date;
