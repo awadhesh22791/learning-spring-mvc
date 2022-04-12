@@ -18,6 +18,7 @@ import javax.persistence.Table;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.cfg.Configuration;
+import org.hibernate.query.Query;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -48,7 +49,7 @@ public class Instructor {
 	private InstructorDetail instructorDetail;
 	@OneToMany(mappedBy = "instructor",
 			cascade = {CascadeType.DETACH,CascadeType.MERGE,CascadeType.PERSIST,CascadeType.REFRESH},
-			fetch = FetchType.EAGER)
+			fetch = FetchType.LAZY)
 	private List<Course>courses;
 	
 	public void addCourse(Course course) {
@@ -81,6 +82,24 @@ public class Instructor {
 		} finally {
 			factory.close();
 		}
+	}
+	
+	public Instructor loadFetchJoin(Integer id) {
+		Instructor instructor=null;
+		SessionFactory factory = new Configuration().configure().addAnnotatedClass(this.getClass())
+				.addAnnotatedClass(InstructorDetail.class).addAnnotatedClass(Course.class).buildSessionFactory();
+		try (Session session=factory.getCurrentSession()) {
+			session.beginTransaction();
+			Query<Instructor> instructorQuery = session.createQuery("select i from Instructor i"
+					+ " JOIN FETCH i.courses"
+					+ " where i.id=:id", Instructor.class);
+			instructorQuery.setParameter("id", id);
+			instructor = instructorQuery.getSingleResult();
+			session.getTransaction().commit();
+		} finally {
+			factory.close();
+		}
+		return instructor;
 	}
 	
 	public void delete() {
