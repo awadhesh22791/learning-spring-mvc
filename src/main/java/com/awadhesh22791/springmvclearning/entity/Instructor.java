@@ -62,7 +62,8 @@ public class Instructor {
 
 	public void save() {
 		SessionFactory factory = new Configuration().configure().addAnnotatedClass(this.getClass())
-				.addAnnotatedClass(InstructorDetail.class).addAnnotatedClass(Course.class).buildSessionFactory();
+				.addAnnotatedClass(InstructorDetail.class).addAnnotatedClass(Course.class).addAnnotatedClass(Review.class)
+				.buildSessionFactory();
 		try (Session session=factory.getCurrentSession()) {
 			session.beginTransaction();
 			session.persist(this);
@@ -74,7 +75,8 @@ public class Instructor {
 	
 	public void load(Integer id) {
 		SessionFactory factory = new Configuration().configure().addAnnotatedClass(this.getClass())
-				.addAnnotatedClass(InstructorDetail.class).addAnnotatedClass(Course.class).buildSessionFactory();
+				.addAnnotatedClass(InstructorDetail.class).addAnnotatedClass(Course.class).addAnnotatedClass(Review.class)
+				.buildSessionFactory();
 		try (Session session=factory.getCurrentSession()) {
 			session.beginTransaction();
 			session.load(this, id);
@@ -87,7 +89,8 @@ public class Instructor {
 	public Instructor loadFetchJoin(Integer id) {
 		Instructor instructor=null;
 		SessionFactory factory = new Configuration().configure().addAnnotatedClass(this.getClass())
-				.addAnnotatedClass(InstructorDetail.class).addAnnotatedClass(Course.class).buildSessionFactory();
+				.addAnnotatedClass(InstructorDetail.class).addAnnotatedClass(Course.class).addAnnotatedClass(Review.class)
+				.buildSessionFactory();
 		try (Session session=factory.getCurrentSession()) {
 			session.beginTransaction();
 			Query<Instructor> instructorQuery = session.createQuery("select i from Instructor i"
@@ -104,7 +107,8 @@ public class Instructor {
 	
 	public void delete() {
 		SessionFactory factory = new Configuration().configure().addAnnotatedClass(this.getClass())
-				.addAnnotatedClass(InstructorDetail.class).addAnnotatedClass(Course.class).buildSessionFactory();
+				.addAnnotatedClass(InstructorDetail.class).addAnnotatedClass(Course.class).addAnnotatedClass(Review.class)
+				.buildSessionFactory();
 		this.load(this.id);
 		try (Session session=factory.getCurrentSession()) {
 			session.beginTransaction();
