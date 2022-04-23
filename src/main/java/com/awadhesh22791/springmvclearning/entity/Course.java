@@ -2,6 +2,7 @@ package com.awadhesh22791.springmvclearning.entity;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -25,6 +26,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
+import lombok.extern.log4j.Log4j2;
 
 @Entity
 @Table(name = "course")
@@ -33,6 +35,7 @@ import lombok.ToString;
 @AllArgsConstructor
 @ToString(exclude = { "instructor" })
 @Builder
+@Log4j2
 public class Course {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -40,23 +43,25 @@ public class Course {
 	private Integer id;
 	@Column(name = "title")
 	private String title;
-	@ManyToOne(cascade = { CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH },fetch = FetchType.LAZY)
+	@ManyToOne(cascade = { CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST,
+			CascadeType.REFRESH }, fetch = FetchType.LAZY)
 	@JoinColumn(name = "instructor")
 	private Instructor instructor;
-	@OneToMany(cascade = CascadeType.ALL,fetch = FetchType.LAZY)
+	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	@JoinColumn(name = "course_id")
-	private List<Review>reviews;
-	
+	private List<Review> reviews;
+
 	public void add(Review review) {
-		if(this.reviews==null) {
-			this.reviews=new ArrayList<>();
+		if (this.reviews == null) {
+			this.reviews = new ArrayList<>();
 		}
 		this.reviews.add(review);
 	}
 
 	public void save() {
-		SessionFactory factory = new Configuration().configure().addAnnotatedClass(Course.class).addAnnotatedClass(Review.class)
-				.addAnnotatedClass(Instructor.class).addAnnotatedClass(InstructorDetail.class).buildSessionFactory();
+		SessionFactory factory = new Configuration().configure().addAnnotatedClass(Course.class)
+				.addAnnotatedClass(Review.class).addAnnotatedClass(Instructor.class)
+				.addAnnotatedClass(InstructorDetail.class).buildSessionFactory();
 		try (Session session = factory.getCurrentSession()) {
 			session.beginTransaction();
 			session.save(this);
@@ -67,8 +72,9 @@ public class Course {
 	}
 
 	public void delete() {
-		SessionFactory factory = new Configuration().configure().addAnnotatedClass(Course.class).addAnnotatedClass(Review.class)
-				.addAnnotatedClass(Instructor.class).addAnnotatedClass(InstructorDetail.class).buildSessionFactory();
+		SessionFactory factory = new Configuration().configure().addAnnotatedClass(Course.class)
+				.addAnnotatedClass(Review.class).addAnnotatedClass(Instructor.class)
+				.addAnnotatedClass(InstructorDetail.class).buildSessionFactory();
 		try (Session session = factory.getCurrentSession()) {
 			session.beginTransaction();
 			session.load(this, this.id);
@@ -80,30 +86,29 @@ public class Course {
 	}
 
 	public void saveReviews() {
-		SessionFactory factory = new Configuration()
-								.configure().addAnnotatedClass(Course.class).addAnnotatedClass(Instructor.class)
-								.addAnnotatedClass(Review.class).addAnnotatedClass(InstructorDetail.class).buildSessionFactory();
-		try (Session session = factory.openSession()){
+		SessionFactory factory = new Configuration().configure().addAnnotatedClass(Course.class)
+				.addAnnotatedClass(Instructor.class).addAnnotatedClass(Review.class)
+				.addAnnotatedClass(InstructorDetail.class).buildSessionFactory();
+		try (Session session = factory.openSession()) {
 			session.beginTransaction();
 			Course currentCourse = session.load(Course.class, this.id);
-			this.getReviews().forEach(review->currentCourse.add(review));
+			this.getReviews().forEach(review -> currentCourse.add(review));
 			session.save(currentCourse);
 			session.getTransaction().commit();
 		} finally {
 			factory.close();
 		}
 	}
-	
+
 	public Course getCourseReviews() {
-		Course course=null;
-		SessionFactory factory = new Configuration()
-								.configure().addAnnotatedClass(Course.class).addAnnotatedClass(Review.class)
-								.addAnnotatedClass(Instructor.class).addAnnotatedClass(InstructorDetail.class).buildSessionFactory();
+		Course course = null;
+		SessionFactory factory = new Configuration().configure().addAnnotatedClass(Course.class)
+				.addAnnotatedClass(Review.class).addAnnotatedClass(Instructor.class)
+				.addAnnotatedClass(InstructorDetail.class).buildSessionFactory();
 		try (Session session = factory.openSession()) {
 			session.beginTransaction();
-			Query<Course> getCourseQuery = session.createQuery("select c from Course c"
-					+ " JOIN FETCH c.reviews"
-					+ " where c.id=:courseId", Course.class);
+			Query<Course> getCourseQuery = session.createQuery(
+					"select c from Course c" + " JOIN FETCH c.reviews" + " where c.id=:courseId", Course.class);
 			getCourseQuery.setParameter("courseId", this.id);
 			course = getCourseQuery.getSingleResult();
 			session.getTransaction().commit();
