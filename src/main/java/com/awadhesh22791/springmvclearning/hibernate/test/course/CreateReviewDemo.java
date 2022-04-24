@@ -8,10 +8,10 @@ import lombok.extern.log4j.Log4j2;
 public class CreateReviewDemo {
 	public static void main(String[] args) {
 		
-		Course course=Course.builder().id(1).build();
-		course.add(Review.builder().comment("Good book to read.").build());
-		course.add(Review.builder().comment("Nice thought process of writer.").build());
-		course.add(Review.builder().comment("Depth of knowledge").build());
+		Course course=Course.builder().id(6).build();
+		course.add(Review.builder().comment("Nice learning.").build());
+		course.add(Review.builder().comment("Great job.").build());
+		course.add(Review.builder().comment("Awsome!").build());
 		course.saveReviews();
 		log.info("Added reviews: {}",course.getReviews());		
 	}

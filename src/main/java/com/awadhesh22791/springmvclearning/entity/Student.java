@@ -3,23 +3,22 @@ package com.awadhesh22791.springmvclearning.entity;
 import java.util.Collections;
 import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import javax.persistence.Table;
 import javax.persistence.Transient;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Predicate;
-
 import org.hibernate.ObjectNotFoundException;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.cfg.Configuration;
-import org.hibernate.criterion.Expression;
-import org.hibernate.criterion.Restrictions;
-
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -46,6 +45,20 @@ public class Student {
 	private String lastName;
 	@Column(name = "email")
 	private String email;
+	@ManyToMany(cascade = {CascadeType.DETACH,CascadeType.MERGE,CascadeType.PERSIST,CascadeType.REFRESH},fetch = FetchType.LAZY)
+	@JoinTable(
+			name = "student_courses",
+			joinColumns = @JoinColumn(name="student_id"),
+			inverseJoinColumns = @JoinColumn(name="course_id")
+			)
+	private List<Course>courses;
+	
+	public void addCourse(Course course) {
+		if(courses==null) {
+			courses=Collections.emptyList();
+		}
+		courses.add(course);
+	}
 
 	@Transient
 	public String fullName() {
@@ -57,8 +70,10 @@ public class Student {
 	}
 
 	public void save() {
-		SessionFactory factory = new Configuration().configure().addAnnotatedClass(this.getClass())
-				.buildSessionFactory();
+		SessionFactory factory = new Configuration().configure().addAnnotatedClass(Student.class)
+								.addAnnotatedClass(Course.class).addAnnotatedClass(Instructor.class).addAnnotatedClass(InstructorDetail.class)
+								.addAnnotatedClass(Review.class)
+								.buildSessionFactory();
 		Session currentSession = factory.getCurrentSession();
 		try {
 			currentSession.beginTransaction();

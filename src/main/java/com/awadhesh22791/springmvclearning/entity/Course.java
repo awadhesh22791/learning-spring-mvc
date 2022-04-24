@@ -1,9 +1,8 @@
 package com.awadhesh22791.springmvclearning.entity;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
-
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -12,6 +11,8 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
@@ -50,6 +51,21 @@ public class Course {
 	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	@JoinColumn(name = "course_id")
 	private List<Review> reviews;
+	
+	@ManyToMany(cascade = {CascadeType.DETACH,CascadeType.MERGE,CascadeType.PERSIST,CascadeType.REFRESH},fetch = FetchType.LAZY)
+	@JoinTable(
+			name = "student_courses",
+			joinColumns = @JoinColumn(name="course_id"),
+			inverseJoinColumns =@JoinColumn(name= "student_id")
+			)
+	private List<Student>students;
+	
+	public void addStudent(Student student) {
+		if(students==null) {
+			students=Collections.emptyList();
+		}
+		students.add(student);
+	}
 
 	public void add(Review review) {
 		if (this.reviews == null) {

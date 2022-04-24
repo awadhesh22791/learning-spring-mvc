@@ -7,7 +7,7 @@ import lombok.extern.log4j.Log4j2;
 @Log4j2
 public class DeleteCourseDemo {
 	public static void main(String[] args) {
-		Course html=Course.builder().id(2).build();
+		Course html=Course.builder().id(1).build();
 		html.delete();
 		log.info("Deleted course {}.",html);
 	}

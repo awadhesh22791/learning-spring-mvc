@@ -9,8 +9,8 @@ import lombok.extern.log4j.Log4j2;
 public class CreateCourseDemo {
 	public static void main(String[] args) {
 		Instructor instructor=new Instructor();
-		instructor.load(3);
-		Course course=Course.builder().title("Mastering HTML").instructor(instructor).build();
+		instructor.load(4);
+		Course course=Course.builder().title("Bhangra").instructor(instructor).build();
 		course.save();
 		log.info("Saved course: {}.",course);
 	}
